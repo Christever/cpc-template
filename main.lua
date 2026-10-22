@@ -2,9 +2,9 @@ io.stdout:setvbuf("no")
 
 love.graphics.setDefaultFilter("nearest", "nearest")
 
--- require("core.Reg")
 
--- Configuration du rendu Amstrad CPC (Mode 1 : 320 x 200, 40 colonnes)
+
+-- Configuration du rendu Amstrad CPC (Mode 0 : 160 x 200, 20 colonnes)
 local SCREEN_W, SCREEN_H = 160, 200
 
 -- On définit deux échelles : les pixels horizontaux sont 2 fois plus grands
