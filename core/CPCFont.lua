@@ -2,22 +2,22 @@
 -- Palette emblématique de l'Amstrad CPC (27 couleurs au total)
 -- Ici, on sélectionne les 4 couleurs par défaut du Mode 1 au démarrage
 CPC_PALETTE = {
-    [0]  = { 0, 0, 0.5 },   -- 0: Bleu foncé (Fond classique)
-    [1]  = { 1, 1, 0 },     -- 1: Jaune
-    [2]  = { 0, 1, 1 },     -- 2: Cyan
-    [3]  = { 1, 1, 1 },     -- 3: Blanc
-    [4]  = { 1, 0, 0 },     -- 4: Rouge
-    [5]  = { 1, 0, 1 },     -- 5: Magenta
-    [6]  = { 0, 0.5, 0 },   -- 6: Vert foncé
+    [0]  = { 0, 0, 0.5 },     -- 0: Bleu foncé (Fond classique)
+    [1]  = { 1, 1, 0 },       -- 1: Jaune
+    [2]  = { 0, 1, 1 },       -- 2: Cyan
+    [3]  = { 1, 1, 1 },       -- 3: Blanc
+    [4]  = { 1, 0, 0 },       -- 4: Rouge
+    [5]  = { 1, 0, 1 },       -- 5: Magenta
+    [6]  = { 0, 0.5, 0 },     -- 6: Vert foncé
     [7]  = { 0.5, 0.5, 0.5 }, -- 7: Gris
-    [8]  = { 0, 0, 1 },     -- 8: Bleu vif
-    [9]  = { 0, 1, 0 },     -- 9: Vert vif
-    [10] = { 0.5, 0, 0 },   -- 10: Marron
-    [11] = { 1, 0.5, 0.5 }, -- 11: Rose
-    [12] = { 0, 0.5, 1 },   -- 12: Bleu ciel
-    [13] = { 1, 0, 0.5 },   -- 13: Mauve
-    [14] = { 0.5, 1, 0.5 }, -- 14: Vert menthe
-    [15] = { 1, 0.5, 0 }    -- 15: Orange
+    [8]  = { 0, 0, 1 },       -- 8: Bleu vif
+    [9]  = { 0, 1, 0 },       -- 9: Vert vif
+    [10] = { 0.5, 0, 0 },     -- 10: Marron
+    [11] = { 1, 0.5, 0.5 },   -- 11: Rose
+    [12] = { 0, 0.5, 1 },     -- 12: Bleu ciel
+    [13] = { 1, 0, 0.5 },     -- 13: Mauve
+    [14] = { 0.5, 1, 0.5 },   -- 14: Vert menthe
+    [15] = { 1, 0.5, 0 }      -- 15: Orange
 }
 
 local CPC_CHAR_ROM = {
@@ -63,6 +63,8 @@ local CPC_CHAR_ROM = {
     [")"] = { 0x30, 0x18, 0x0C, 0x0C, 0x0C, 0x18, 0x30, 0x00 },
     ["-"] = { 0x00, 0x00, 0x00, 0x3E, 0x00, 0x00, 0x00, 0x00 },
     ["+"] = { 0x00, 0x18, 0x18, 0x7E, 0x18, 0x18, 0x00, 0x00 },
+    [":"] = { 0x00, 0x18, 0x18, 0x00, 0x00, 0x18, 0x18, 0x00 },
+
 }
 
 
@@ -70,23 +72,23 @@ local CPC_CHAR_ROM = {
 -- Dans core/CPCFont.lua
 function CPCPrint(text, char_x, char_y, ink_index, paper_index)
     -- Pas besoin de modifier love.graphics.setCanvas(canvas) ici s'il est géré dans main.lua
-    
+
     for i = 1, #text do
         local char = text:sub(i, i):upper()
         local font_bytes = CPC_CHAR_ROM[char]
-        
-        if not font_bytes then font_bytes = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF} end
-        
+
+        if not font_bytes then font_bytes = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF } end
+
         -- Position X de départ en pixels pour ce caractère (chaque lettre fait 8 pixels de large)
         local char_origin_x = (char_x + (i - 1)) * 8
         local char_origin_y = char_y * 8
-        
+
         for y = 0, 7 do
             local byte = font_bytes[y + 1]
             for x = 0, 7 do
                 local power = 2 ^ (7 - x)
                 local pixel_on = (math.floor(byte / power) % 2) == 1
-                
+
                 local draw_pixel = false
                 if pixel_on then
                     local color = CPC_PALETTE[ink_index or 1]
@@ -97,7 +99,7 @@ function CPCPrint(text, char_x, char_y, ink_index, paper_index)
                     love.graphics.setColor(color, color, color, 1)
                     draw_pixel = true
                 end
-                
+
                 if draw_pixel then
                     -- CORRECTION : Dessin à l'échelle 1:1 car le canvas fait déjà 160x200
                     love.graphics.points(char_origin_x + x, char_origin_y + y)
@@ -106,4 +108,3 @@ function CPCPrint(text, char_x, char_y, ink_index, paper_index)
         end
     end
 end
-
